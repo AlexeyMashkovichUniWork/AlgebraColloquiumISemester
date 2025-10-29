@@ -1,15 +1,25 @@
 name: CI
-on: [push]
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+on:
+  push:
+    branches: main
+  pull_request:
+    branches: main
+
 jobs:
-  build:
+  make-pdf:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
+
     steps:
     - uses: actions/checkout@v4
-#    - name: Run make4ht
-#      uses: docker://ghcr.io/michal-h21/make4ht-action:latest
-#      env:
-#        command: "make4ht -u -d out main.tex"
-    - uses: xu-cheng/latex-action@v4
+    
+    - name: Compile LaTeX (XeLaTeX)
+      uses: xu-cheng/latex-action@v4
       with:
         root_file: main.tex
         texlive_version: latest
